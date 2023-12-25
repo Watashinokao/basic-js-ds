@@ -60,9 +60,71 @@ class BinarySearchTree {
     return findNodeTree(this.tree);
   }
 
-  remove(/* data */) {
-    throw new NotImplementedError("Not implemented");
-    // remove line with error and write your code here
+  remove(data) {
+    let curNode = this.tree;
+    let prevNode = null;
+
+    while (curNode) {
+      if (curNode.data === data) {
+        //есть ли дочерние ноды
+        if (!curNode.left && !curNode.right) {
+          if (!prevNode) this.tree = null;
+          else
+            prevNode.right === curNode
+              ? (prevNode.right = null)
+              : (prevNode.left = null);
+          break;
+        }
+        // нет меньшего нода
+        if (!curNode.left) {
+          if (!prevNode) this.tree = curNode.right;
+          else
+            prevNode.left === curNode
+              ? (prevNode.left = curNode.right)
+              : (prevNode.right = curNode.right);
+          break;
+        }
+        //нет большего нода
+        if (!curNode.right) {
+          if (!prevNode) this.tree = curNode.left;
+          else
+            prevNode.left === curNode
+              ? (prevNode.left = curNode.left)
+              : (prevNode.right = curNode.left);
+          break;
+        }
+        //нет меньнего нода у правого поддерева
+        if (!curNode.right.left) {
+          if (!prevNode) {
+            this.tree.data = curNode.right.data;
+            this.tree.right = curNode.right.right;
+          } else {
+            if (prevNode.left === curNode) {
+              prevNode.left.data = curNode.right.data;
+              prevNode.left.right = curNode.right.right;
+            } else {
+              prevNode.right.data = curNode.right.data;
+              prevNode.right.right = curNode.right.right;
+            }
+          }
+          break;
+        }
+        //есть меньший нод
+        let minNode = curNode.right.left;
+        let prevNodeMinNode = curNode.right;
+        while (minNode.left) {
+          prevNodeMinNode = minNode;
+          minNode = minNode.left;
+        }
+        curNode.data = minNode.data;
+        prevNodeMinNode.left = minNode.right || null;
+        break;
+      }
+
+      prevNode = curNode;
+      if (curNode.data > data) curNode = curNode.left;
+      else curNode = curNode.right;
+    }
   }
 
   min() {
